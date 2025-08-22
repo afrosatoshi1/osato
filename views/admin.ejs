@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <h1>Welcome, Admin</h1>
+  <a href="/logout">Logout</a>
+
+  <h2>Products</h2>
+  <table border="1" cellpadding="5">
+    <tr>
+      <th>Name</th><th>Price</th><th>Category</th><th>Description</th><th>Actions</th>
+    </tr>
+    <% products.forEach(p => { %>
+      <tr>
+        <form action="/admin/product/edit/<%= p.id %>" method="POST">
+          <td><input type="text" name="name" value="<%= p.name %>"></td>
+          <td><input type="number" name="price" value="<%= p.price %>"></td>
+          <td>
+            <select name="category_id">
+              <% categories.forEach(c => { %>
+                <option value="<%= c.id %>" <%= p.category_id === c.id ? "selected" : "" %>><%= c.name %></option>
+              <% }) %>
+            </select>
+          </td>
+          <td><input type="text" name="description" value="<%= p.description %>"></td>
+          <td>
+            <button type="submit">Save</button>
+            <a href="/admin/product/delete/<%= p.id %>">Delete</a>
+          </td>
+        </form>
+      </tr>
+    <% }) %>
+  </table>
+
+  <h2>Add New Product</h2>
+  <form action="/admin/product/add" method="POST">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="number" name="price" placeholder="Price" required>
+    <select name="category_id">
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>"><%= c.name %></option>
+      <% }) %>
+    </select>
+    <input type="text" name="description" placeholder="Description">
+    <button type="submit">Add</button>
+  </form>
+</body>
+</html>
