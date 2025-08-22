@@ -1,0 +1,16 @@
+<% layout('layout') -%>
+<h2><%= product.name %></h2>
+<p><%= product.description %></p>
+<p class="price">₦<%= (product.price_cents/100).toFixed(2) %></p>
+<form method="post" action="/cart/add" onsubmit="event.preventDefault(); fetch('/cart/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId:<%= product.id %>})}).then(()=>alert('Added to cart'))">
+  <button class="btn">Add to cart</button>
+</form>
+<h3>Recommended</h3>
+<div class="grid">
+  <% recs.forEach(r=> { %>
+    <div class="card">
+      <h4><a href="/product/<%= r.id %>"><%= r.name %></a></h4>
+      <p class="price">₦<%= (r.price_cents/100).toFixed(2) %></p>
+    </div>
+  <% }) %>
+</div>
