@@ -63,3 +63,44 @@ app.get('/logout',(req,res)=>{
 });
 
 app.listen(process.env.PORT || 3000,()=>console.log('Server running'));
+
+// Admin middleware
+function isAdmin(req, res, next) {
+  if (req.session.user && req.session.user.email === "admin@neotech.local") {
+    return next();
+  }
+  res.redirect("/login");
+}
+
+// Admin dashboard
+app.get("/admin", isAdmin, (req, res) => {
+  db.all("SELECT * FROM products", [], (err, products) => {
+    db.all("SELECT * FROM categories", [], (err, categories) => {
+      res.render("admin", { products, categories, user: req.session.user });
+    });
+  });
+});
+
+// Add product
+app.post("/admin/product/add", isAdmin, (req, res) => {
+  const { name, price, category_id, description } = req.body;
+  db.run("INSERT INTO products (name, price, category_id, description) VALUES (?, ?, ?, ?)",
+    [name, price, category_id, description],
+    () => res.redirect("/admin")
+  );
+});
+
+// Edit product
+app.post("/admin/product/edit/:id", isAdmin, (req, res) => {
+  const { name, price, category_id, description } = req.body;
+  db.run("UPDATE products SET name=?, price=?, category_id=?, description=? WHERE id=?",
+    [name, price, category_id, description, req.params.id],
+    () => res.redirect("/admin")
+  );
+});
+
+// Delete product
+app.get("/admin/product/delete/:id", isAdmin, (req, res) => {
+  db.run("DELETE FROM products WHERE id=?", [req.params.id], () => res.redirect("/admin"));
+});
+
