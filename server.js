@@ -14,6 +14,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: true }));
 
 const db = new sqlite3.Database('./database.db');
+// Ensure default admin exists
+db.get("SELECT * FROM users WHERE email = ?", ["admin@neotech.local"], (err, row) => {
+  if (!row) {
+    const bcrypt = require("bcrypt");
+    const hashedPassword = bcrypt.hashSync("admin123", 10);
+    db.run("INSERT INTO users (email, password, role) VALUES (?, ?, ?)", 
+      ["admin@neotech.local", hashedPassword, "admin"]);
+    console.log("✅ Default admin created: admin@neotech.local / admin123");
+  }
+});
 
 // Middleware to check user login
 app.use((req,res,next)=>{
