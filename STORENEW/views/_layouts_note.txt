@@ -1,1 +1,0 @@
-Templates use <% layout('layout') -%> directive; Express will inline body via res.render chaining in server.
