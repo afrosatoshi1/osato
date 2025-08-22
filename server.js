@@ -103,4 +103,20 @@ app.post("/admin/product/edit/:id", isAdmin, (req, res) => {
 app.get("/admin/product/delete/:id", isAdmin, (req, res) => {
   db.run("DELETE FROM products WHERE id=?", [req.params.id], () => res.redirect("/admin"));
 });
+// Add Category
+app.post("/admin/category/add", isAdmin, (req, res) => {
+  const { name } = req.body;
+  db.run("INSERT INTO categories (name) VALUES (?)", [name], () => res.redirect("/admin"));
+});
+
+// Edit Category
+app.post("/admin/category/edit/:id", isAdmin, (req, res) => {
+  const { name } = req.body;
+  db.run("UPDATE categories SET name=? WHERE id=?", [name, req.params.id], () => res.redirect("/admin"));
+});
+
+// Delete Category
+app.get("/admin/category/delete/:id", isAdmin, (req, res) => {
+  db.run("DELETE FROM categories WHERE id=?", [req.params.id], () => res.redirect("/admin"));
+});
 
